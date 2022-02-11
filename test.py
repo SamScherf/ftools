@@ -1,20 +1,31 @@
 from ftools import asd
 import numpy as np
 import matplotlib.pyplot as plt
-
+from scipy.interpolate import interp1d
+from scipy import integrate
 
 def main():
     # Get time series
-    sample_rate = 10
+    sample_rate = 100
     start_time = 0
-    end_time = 50
+    end_time = 60
     time_series = sample(start_time, end_time, sample_rate)
 
     # Get asd
     freq, mag = asd(time_series, sample_rate)
 
+    # print(sum(mag**2)/(freq[1]-freq[0]))
+    # print(sum(time_series**2))
+
+    # Get RMS
+    RMS = np.sqrt(integrate.trapezoid(mag**2, x=freq))
+    print(RMS)
+
     # Plot ASD
     plt.plot(freq, np.abs(mag))
+    plt.ylabel("Displacement [m/sqrt(Hz)]")
+    plt.xlabel("Frequency [Hz]")
+    plt.title("ASD")
     plt.savefig("image.png")
 
 
@@ -35,6 +46,7 @@ def signal_generator(t):
     freq_2 = 4
     period_2 = freq_2*2*np.pi
 
+    # Lets just say units of m
     return 2*np.sin(period_1*t)+np.sin(period_2*t)
 
 

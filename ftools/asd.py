@@ -40,10 +40,10 @@ def asd(time_series, sample_rate):
         for power spectra.
 
     """
-    # Get number of points in time series
+    # Get number of points in time series (units of samples)
     N = len(time_series)
 
-    # Get bin width
+    # Get bin width (units of Hz)
     BW = sample_rate/N
 
     # Get Fourier transform and frequency bins
@@ -51,7 +51,7 @@ def asd(time_series, sample_rate):
     freq = rfftfreq(N)*sample_rate
 
     # Convert fft to asd
-    asd = np.sqrt(2)*1/N*np.abs(dft)*1/np.sqrt(BW)
+    asd = (np.abs(dft)/N)*(np.sqrt(2))*1/np.sqrt(BW)
     asd[0] *= 1/np.sqrt(2)
 
     # If n is even
