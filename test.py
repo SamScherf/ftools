@@ -6,16 +6,13 @@ from scipy import integrate
 
 def main():
     # Get time series
-    sample_rate = 100
+    sample_rate = 64
     start_time = 0
     end_time = 60
     time_series = sample(start_time, end_time, sample_rate)
 
     # Get asd
     freq, mag = asd(time_series, sample_rate)
-
-    # print(sum(mag**2)/(freq[1]-freq[0]))
-    # print(sum(time_series**2))
 
     # Get RMS
     RMS = np.sqrt(integrate.trapezoid(mag**2, x=freq))
