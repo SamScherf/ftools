@@ -3,9 +3,13 @@ file: asd2.py
 """
 import numpy as np
 
+# Define windows dictionary
+WINDOWS = dict()
+WINDOWS['hanning'] = np.hanning
 
-def asd2(time_series, sample_rate, smooth_width=9, poly_fit_terms=1,
-         win_pointer='@hann', varargin=1):
+
+def asd2(time_series, sample_rate, smooth_width=9, detrend=1,
+         window='hanning'):
     """ASD2 calculates SMOOTHED, WINDOWED ASD of a time series
 
     Input:
@@ -14,12 +18,10 @@ def asd2(time_series, sample_rate, smooth_width=9, poly_fit_terms=1,
     sample_rate    the sampling rate in Hz (samples per second)
     smooth_width   number of raw fft bins to average across (e.g. 9) -
                    this is like the number of averages. MUST BE ODD!
-    poly_fit_terms order of polynomial to be removed from the data,
+    detrend        order of polynomial to be removed from the data,
                    (we use polyfit) 0 = DC, 1 = DC and best fit line,
                    2 = DC, line, and parabola, etc.  (1 is good)
-    window_pointer    pointer to the built-in window, (e.g. @hann)
-                      see 'help window' for more information on windows
-    window_options    options for the windows, per 'help window'
+    window         name of window to use (currently only hanning is supported)
 
     Output:
     -------
@@ -91,30 +93,49 @@ def asd2(time_series, sample_rate, smooth_width=9, poly_fit_terms=1,
     """
 
     # 0) Clean input
-    check_input(time_series, sample_rate, smooth_width)
-
-    # Get local evaluation times (t)
-    N = len(time_series)
-    t = np.linspace(0, N/sample_rate, num=N)
+    check_input(time_series, sample_rate, smooth_width, window)
 
     # 1) De-trend the time series
-    time_series = detrend(time_series, poly_fit_terms, t)
+    time_series = apply_detrend(time_series, order=detrend)
 
-    return t, time_series
+    # 2) Window the time series
+    # time_series = apply_window(time_series, window_name=window)
+
+    return time_series
 
 
-def detrend(time_series, poly_fit_terms, t):
+def apply_window(time_series, window_name='hanning'):
+    """ This function applies a window to the time series
+    """
+
+    # Get window function
+    window_function = WINDOWS[window_name](len(time_series))
+
+    # Normalize window function
+    window_function *= np.mean(window_function**2)**(-0.5)
+
+    # Apply window function
+    return time_series*window_function
+
+
+def apply_detrend(time_series, order=1):
     """ This function de-trends a time series
 
     This function removes the poly_fit_term order polynomial
     for the time_series. I.e. if poly_fit_term = 1, it removes
     the mean and slope.
     """
-    coefficients = np.polyfit(t, time_series, poly_fit_terms)
-    return time_series - np.polyval(coefficients, t)
+    # Get 'x values' for poly fit
+    x = np.arange(len(time_series))
+
+    # Get coefficients for polynomial fit
+    coefficients = np.polyfit(x, time_series, order)
+
+    # Remove polynomial from time series
+    return time_series - np.polyval(coefficients, x)
 
 
-def check_input(time_series, sample_rate, smooth_width):
+def check_input(time_series, sample_rate, smooth_width, window):
     """This function check that the input values are valid
     """
 
@@ -128,4 +149,8 @@ def check_input(time_series, sample_rate, smooth_width):
 
     # Check if smooth rate is less than 1
     if smooth_width < 1:
-        raise Exception("Smooth width must be >= 1")
+        raise Exception("Input smooth_width must be >= 1")
+
+    # Check if window is supported
+    if window not in WINDOWS.keys():
+        raise Exception(f"The window '{window}' is not supported")
