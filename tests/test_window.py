@@ -1,10 +1,9 @@
 """
-file: test_detrend.py
+file: test_window.py
 
-This file tests the apply_detrend function of ftools
+This file tests the apply_window function of ftools
 """
-
-from ftools.asd2 import apply_detrend
+from ftools.asd2 import apply_window
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -23,38 +22,32 @@ def main():
     t = np.linspace(0, N/sample_rate, num=N)
 
     # De-trend time series
-    detrended = apply_detrend(raw_time_series, order=2)
-
-    # Get original wave and trend
-    orginal_wave = sin_wave(t)
-    trend = get_trend(t)
+    windowed = apply_window(raw_time_series, window_name="hanning")
 
     # Plot
-    plot(t, raw_time_series, trend, orginal_wave, detrended)
+    plot(t, raw_time_series, windowed)
 
 
-def plot(t, raw_time_series, trend, orginal_wave, detrended):
+def plot(t, raw_time_series, windowed):
 
     # Set up subplots
     figure, axis = plt.subplots(2, 1)
     figure.set_figheight(10)
     figure.set_figwidth(8)
-    figure.suptitle("Demonstration of apply_detrend function")
+    figure.suptitle("Demonstration of apply_window function")
 
     # Plot original function
-    axis[0].set_title("Non-detrended Data")
+    axis[0].set_title("Non-windowed Data")
     axis[0].set_ylabel("Motion [m]")
     axis[0].set_xlabel("Time [s]")
     axis[0].plot(t, raw_time_series, label="Raw Time Series")
-    axis[0].plot(t, trend, label="Applied Trend")
     axis[0].legend()
 
     # Plot de-trended function
-    axis[1].set_title("Detrended Data")
+    axis[1].set_title("Windowed Data")
     axis[1].set_ylabel("Motion [m]")
     axis[1].set_xlabel("Time [s]")
-    axis[1].plot(t, detrended, label="Detrended function")
-    axis[1].plot(t, orginal_wave, label="Original Sin Wave")
+    axis[1].plot(t, windowed, label="Detrended function")
     axis[1].legend()
 
     plt.savefig("image.png")
@@ -70,8 +63,7 @@ def sample(start, end, sample_rate):
 
 
 def signal_generator(t):
-    # Combine trend and sin wave
-    return sin_wave(t) + get_trend(t)
+    return sin_wave(t)
 
 
 def sin_wave(t):
@@ -81,10 +73,6 @@ def sin_wave(t):
 
     # Return sin wave
     return amplitude*np.sin(2*np.pi*freq*t)
-
-
-def get_trend(t):
-    return 0.005*t**2
 
 
 if __name__ == "__main__":

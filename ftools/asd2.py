@@ -1,6 +1,7 @@
 """
 file: asd2.py
 """
+from .asd import asd
 import numpy as np
 
 # Define windows dictionary
@@ -99,9 +100,46 @@ def asd2(time_series, sample_rate, smooth_width=9, detrend=1,
     time_series = apply_detrend(time_series, order=detrend)
 
     # 2) Window the time series
-    # time_series = apply_window(time_series, window_name=window)
+    time_series = apply_window(time_series, window_name=window)
 
-    return time_series
+    # 3) Take ASD
+    freq, mag = asd(time_series, sample_rate)
+
+    # 4) Average over adjacent bins
+    freq, mag = average_bins(freq, mag, smooth_width)
+
+    # Return frequency and magnitude of ASD
+    return freq, mag
+
+
+def average_bins(freq, mag, smooth_width):
+    """ This function averages over adjacent frequency bins
+
+    The ASD is broke into bins of width 'smooth_width'
+    and then averaged together
+    """
+
+    # Get number of current points and new points
+    N = len(freq)
+    new_N = int(np.floor(N/smooth_width))
+
+    # Initialize new frequency domain and new mag
+    new_freq = np.zeros(new_N)
+    new_mag = np.zeros(new_N)
+
+    # Populate new frequencies and magnitudes
+    for i in range(new_N):
+
+        # Get freq/mag bin
+        freq_bin = freq[i*smooth_width:(i+1)*smooth_width]
+        mag_bin = mag[i*smooth_width:(i+1)*smooth_width]
+
+        # Set new freq to linear average and set new mag to RMS average
+        new_freq[i] = np.mean(freq_bin)
+        new_mag[i] = np.sqrt(np.mean(mag_bin**2))
+
+    # Return new frequency and magnitude
+    return new_freq, new_mag
 
 
 def apply_window(time_series, window_name='hanning'):
