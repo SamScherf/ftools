@@ -3,8 +3,8 @@ file: test_window.py
 
 This file tests the apply_window function of ftools
 """
-from ftools.asd2 import apply_window
-from ftools import asd
+from ftools._utils import apply_window
+from ftools.asd import asd
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -57,7 +57,7 @@ def plot(t, freq, raw_ts, raw_asd, windowed_ts, windowed_asd):
 
     # Plot asd of original function
     axis[0, 1].set_title("Non-windowed asd")
-    axis[0, 1].set_ylabel("Motion [m]")
+    axis[0, 1].set_ylabel("Displacement [m/sqrt(Hz)]")
     axis[0, 1].set_xlabel("Frequency [Hz]")
     axis[0, 1].plot(freq, raw_asd)
     axis[0, 1].loglog()
@@ -65,13 +65,13 @@ def plot(t, freq, raw_ts, raw_asd, windowed_ts, windowed_asd):
 
     # Plot de-trended function
     axis[1, 1].set_title("Windowed ASD")
-    axis[1, 1].set_ylabel("Motion [m]")
-    axis[0, 1].set_xlabel("Frequency [Hz]")
+    axis[1, 1].set_ylabel("Displacement [m/sqrt(Hz)]")
+    axis[1, 1].set_xlabel("Frequency [Hz]")
     axis[1, 1].plot(freq, windowed_asd)
     axis[1, 1].loglog()
     axis[1, 1].set_ylim([y_min, y_max])
 
-    plt.savefig("image.png")
+    plt.savefig("window.png")
 
 
 def sample(start, end, sample_rate):
