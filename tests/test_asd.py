@@ -57,7 +57,7 @@ def plot(t, time_series, freq, mag):
     axis[1].plot(freq, np.abs(mag), label="ASD")
     axis[1].legend()
 
-    plt.savefig("image.png")
+    plt.savefig("asd.png")
 
 
 def check_RMS(freq, mag):
