@@ -4,7 +4,7 @@ file: test_asd.py
 This file tests the asd2 function of ftools
 """
 
-from ftools import asd2
+from ftools import daniell
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import integrate
@@ -25,8 +25,8 @@ def main():
     N = len(time_series)
     t = np.linspace(0, N/sample_rate, num=N)
 
-    # Get asd
-    freq, mag = asd2(time_series, sample_rate, smooth_width=9, detrend=0)
+    # Get asd via daniell's periodogram
+    freq, mag = daniell(time_series, sample_rate, smooth_width=9, detrend=0)
 
     # Check RMS
     check_RMS(freq, mag)
@@ -40,7 +40,7 @@ def plot(t, time_series, freq, mag):
     figure, axis = plt.subplots(2, 1)
     figure.set_figheight(10)
     figure.set_figwidth(8)
-    figure.suptitle("Demonstration of asd2 function")
+    figure.suptitle("Demonstration of daniell function")
 
     # Plot original function
     axis[0].set_title("Time Series")

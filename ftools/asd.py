@@ -8,26 +8,26 @@ from scipy.fft import rfft, rfftfreq
 import numpy as np
 
 
-def asd(time_series, sample_rate):
+def asd(ts, fs=1):
     """ASD calculates the amplitude spectral density of a time series
 
     This function takes in a time_series and sample_rate:
-        time_series: an array of real numbers in time domain
-        sample_rate: number of samples per second
+        ts: an array of real numbers in time domain
+        fs: number of samples per second
 
     This function returns freq and asd:
         freq: an array of frequencies in Hz
         asd: an asd in units of x/sqrt(Hz) (x is unit of time_series)
     """
     # Get number of points in time series (units of samples)
-    N = len(time_series)
+    N = len(ts)
 
     # Get bin width (units of Hz)
-    BW = sample_rate/N
+    BW = fs/N
 
     # Get Fourier transform and frequency bins
-    dft = rfft(time_series)
-    freq = rfftfreq(N, d=1./sample_rate)
+    dft = rfft(ts)
+    freq = rfftfreq(N, d=1./fs)
 
     # Convert fft to asd
     asd = np.abs(dft)/N*1/np.sqrt(BW)
