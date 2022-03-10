@@ -26,7 +26,7 @@ def main():
     t = np.linspace(0, N/sample_rate, num=N)
 
     # Get asd via daniell's periodogram
-    freq, mag = daniell(time_series, sample_rate, smooth_width=9, detrend=0)
+    freq, mag = daniell(time_series, fs=sample_rate, bin_width=9, detrend=2)
 
     # Check RMS
     check_RMS(freq, mag)
@@ -55,7 +55,7 @@ def plot(t, time_series, freq, mag):
     axis[1].semilogx()
     axis[1].plot(freq, np.abs(mag))
 
-    plt.savefig("image.png")
+    plt.savefig("daniell.png")
 
 
 def check_RMS(freq, mag):
