@@ -29,8 +29,8 @@ def daniell(ts, fs=1, bin_width=9, detrend=1,
 
     How it Works:
     -----------
-    This function detrends the time sereis and applies a window
-    so it can take an ASD of the entire time sereies. It splits
+    This function detrends the time series and applies a window
+    so it can take an ASD of the entire time series. It splits
     the ASD up into adjacent bins which are rms averaged together
 
     Why do this?

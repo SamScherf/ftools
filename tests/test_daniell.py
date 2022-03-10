@@ -1,7 +1,7 @@
 """
-file: test_asd.py
+file: test_daniell.py
 
-This file tests the asd2 function of ftools
+This file tests the daniell function of ftools
 """
 
 from ftools import daniell
