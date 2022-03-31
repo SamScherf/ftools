@@ -4,7 +4,7 @@ fTools is a collection of lesser known tools used to analyze signals in the freq
 
 ## How to Use
 
-To install simply, clone the repository and install is with your preferred package manager. If using pip for example:
+To install simply, clone the repository and install with your preferred package manager. If using pip for example:
 
 ```bash
 git clone https://github.com/SamScherf/ftools.git
